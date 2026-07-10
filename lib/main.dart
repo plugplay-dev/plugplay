@@ -1,35 +1,22 @@
 import 'package:flutter/material.dart';
+import 'screens/splash_screen.dart';
 
 void main() {
-  runApp(const WTPEntertainmentApp());
+  runApp(const WTPEntertainment());
 }
 
-class WTPEntertainmentApp extends StatelessWidget {
-  const WTPEntertainmentApp({super.key});
+class WTPEntertainment extends StatelessWidget {
+  const WTPEntertainment({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'WTP Entertainment',
-      home: const SplashScreen(),
-    );
-  }
-}
-
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Center(
-        child: Image.asset(
-          'assets/images/wtp_logo.png',
-          width: 220,
-        ),
+      theme: ThemeData(
+        brightness: Brightness.dark,
       ),
+      home: const SplashScreen(),
     );
   }
 }
