@@ -23,10 +23,10 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(height: 20),
 
               const Text(
-                "WTP ENTERTAINMENT",
+                "PlugPlay",
                 style: TextStyle(
                   color: Colors.amber,
-                  fontSize: 26,
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 2,
                 ),
@@ -53,7 +53,7 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 50),
+              const SizedBox(height: 40),
 
               TextField(
                 style: const TextStyle(color: Colors.white),
@@ -101,7 +101,7 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 25),
+              const SizedBox(height: 20),
 
               SizedBox(
                 width: double.infinity,
@@ -125,7 +125,7 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 25),
+              const SizedBox(height: 20),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -145,7 +145,7 @@ class LoginScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  )
+                  ),
 
                 ],
               ),

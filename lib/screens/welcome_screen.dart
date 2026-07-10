@@ -14,6 +14,7 @@ class WelcomeScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+
               Image.asset(
                 'assets/images/wtp_logo.png',
                 width: 180,
@@ -22,15 +23,16 @@ class WelcomeScreen extends StatelessWidget {
               const SizedBox(height: 30),
 
               const Text(
-                "WTP ENTERTAINMENT",
+                "PlugPlay",
                 style: TextStyle(
                   color: Colors.amber,
-                  fontSize: 28,
+                  fontSize: 30,
                   fontWeight: FontWeight.bold,
+                  letterSpacing: 2,
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 15),
 
               const Text(
                 "Unlimited Music.\nUnlimited Vibes.",
@@ -68,6 +70,7 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
+
             ],
           ),
         ),
