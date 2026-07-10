@@ -1,5 +1,5 @@
 name: musicflow
-description: "A new Flutter project."
+description: "PlugPlay Music Streaming App"
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -12,6 +12,7 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
+  audioplayers: ^6.8.1
 
 dev_dependencies:
   flutter_test:
@@ -23,4 +24,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/images/wtp_logo.png
+    - assets/images/
+    - assets/images/albums/
+    - assets/music/
