@@ -7,7 +7,11 @@ class MusicService {
 
   factory MusicService() => instance;
 
-  MusicService._internal();
+  MusicService._internal() {
+    player.onPlayerComplete.listen((_) {
+      nextSong();
+    });
+  }
 
   final AudioPlayer player = AudioPlayer();
 
