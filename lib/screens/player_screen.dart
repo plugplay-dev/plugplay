@@ -162,6 +162,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
 
+                // Shuffle
                 IconButton(
                   onPressed: () {
                     setState(() {
@@ -173,22 +174,26 @@ class _PlayerScreenState extends State<PlayerScreen> {
                     color: music.shuffleEnabled
                         ? Colors.amber
                         : Colors.white,
-                    size: 35,
+                    size: 32,
                   ),
                 ),
 
+                // Previous
                 IconButton(
                   onPressed: () async {
                     await music.previousSong();
-                    if (mounted) setState(() {});
+                    if (mounted) {
+                      setState(() {});
+                    }
                   },
                   icon: const Icon(
                     Icons.skip_previous,
                     color: Colors.white,
-                    size: 45,
+                    size: 42,
                   ),
                 ),
 
+                // Play / Pause
                 CircleAvatar(
                   radius: 35,
                   backgroundColor: Colors.amber,
@@ -210,15 +215,34 @@ class _PlayerScreenState extends State<PlayerScreen> {
                   ),
                 ),
 
+                // Next
                 IconButton(
                   onPressed: () async {
                     await music.nextSong();
-                    if (mounted) setState(() {});
+                    if (mounted) {
+                      setState(() {});
+                    }
                   },
                   icon: const Icon(
                     Icons.skip_next,
                     color: Colors.white,
-                    size: 45,
+                    size: 42,
+                  ),
+                ),
+
+                // Repeat
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      music.toggleRepeat();
+                    });
+                  },
+                  icon: Icon(
+                    Icons.repeat,
+                    color: music.repeatEnabled
+                        ? Colors.amber
+                        : Colors.white,
+                    size: 32,
                   ),
                 ),
               ],

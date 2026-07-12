@@ -11,7 +11,11 @@ class MusicService {
 
   MusicService._internal() {
     player.onPlayerComplete.listen((_) {
-      nextSong();
+      if (repeatEnabled) {
+        playCurrentSong();
+      } else {
+        nextSong();
+      }
     });
   }
 
@@ -21,6 +25,7 @@ class MusicService {
   int currentIndex = 0;
 
   bool shuffleEnabled = false;
+  bool repeatEnabled = false;
 
   Song? get currentSong {
     if (playlist.isEmpty) return null;
@@ -34,6 +39,10 @@ class MusicService {
 
   void toggleShuffle() {
     shuffleEnabled = !shuffleEnabled;
+  }
+
+  void toggleRepeat() {
+    repeatEnabled = !repeatEnabled;
   }
 
   Future<void> play(String path) async {
