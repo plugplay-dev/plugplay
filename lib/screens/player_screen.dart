@@ -75,8 +75,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
     _durationSubscription.cancel();
     _stateSubscription.cancel();
 
-    music.stop();
-
     super.dispose();
   }  @override
   Widget build(BuildContext context) {
@@ -137,8 +135,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
               value: position.inSeconds
                   .clamp(0, duration.inSeconds)
                   .toDouble(),
-              onChanged: (value) {
-                music.seek(Duration(seconds: value.toInt()));
+              onChanged: (value) async {
+                await music.seek(
+                  Duration(seconds: value.toInt()),
+                );
               },
             ),
 
@@ -182,6 +182,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 IconButton(
                   onPressed: () async {
                     await music.previousSong();
+
                     if (mounted) {
                       setState(() {});
                     }
@@ -219,6 +220,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 IconButton(
                   onPressed: () async {
                     await music.nextSong();
+
                     if (mounted) {
                       setState(() {});
                     }

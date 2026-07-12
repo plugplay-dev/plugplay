@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/song_model.dart';
 import '../services/music_service.dart';
+import '../widgets/mini_player.dart';
 import 'player_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -225,6 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+      bottomNavigationBar: const MiniPlayer(),
     );
   }
 }

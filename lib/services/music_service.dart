@@ -32,6 +32,9 @@ class MusicService {
     return playlist[currentIndex];
   }
 
+  // NEW
+  bool get hasSong => currentSong != null;
+
   void setPlaylist(List<Song> songs, int startIndex) {
     playlist = songs;
     currentIndex = startIndex;
