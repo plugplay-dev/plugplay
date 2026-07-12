@@ -67,7 +67,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
     String two(int n) => n.toString().padLeft(2, '0');
 
     return "${two(d.inMinutes.remainder(60))}:${two(d.inSeconds.remainder(60))}";
-  }  @override
+  }
+
+  @override
   void dispose() {
     _positionSubscription.cancel();
     _durationSubscription.cancel();
@@ -76,9 +78,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
     music.stop();
 
     super.dispose();
-  }
-
-  @override
+  }  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
@@ -161,12 +161,26 @@ class _PlayerScreenState extends State<PlayerScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+
+                IconButton(
+                  onPressed: () {
+                    setState(() {
+                      music.toggleShuffle();
+                    });
+                  },
+                  icon: Icon(
+                    Icons.shuffle,
+                    color: music.shuffleEnabled
+                        ? Colors.amber
+                        : Colors.white,
+                    size: 35,
+                  ),
+                ),
+
                 IconButton(
                   onPressed: () async {
                     await music.previousSong();
-                    if (mounted) {
-                      setState(() {});
-                    }
+                    if (mounted) setState(() {});
                   },
                   icon: const Icon(
                     Icons.skip_previous,
@@ -199,9 +213,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 IconButton(
                   onPressed: () async {
                     await music.nextSong();
-                    if (mounted) {
-                      setState(() {});
-                    }
+                    if (mounted) setState(() {});
                   },
                   icon: const Icon(
                     Icons.skip_next,

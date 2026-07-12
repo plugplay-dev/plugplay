@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:audioplayers/audioplayers.dart';
 
 import '../models/song_model.dart';
@@ -18,6 +20,8 @@ class MusicService {
   List<Song> playlist = [];
   int currentIndex = 0;
 
+  bool shuffleEnabled = false;
+
   Song? get currentSong {
     if (playlist.isEmpty) return null;
     return playlist[currentIndex];
@@ -26,6 +30,10 @@ class MusicService {
   void setPlaylist(List<Song> songs, int startIndex) {
     playlist = songs;
     currentIndex = startIndex;
+  }
+
+  void toggleShuffle() {
+    shuffleEnabled = !shuffleEnabled;
   }
 
   Future<void> play(String path) async {
@@ -42,10 +50,15 @@ class MusicService {
   Future<void> nextSong() async {
     if (playlist.isEmpty) return;
 
-    if (currentIndex < playlist.length - 1) {
-      currentIndex++;
+    if (shuffleEnabled) {
+      final random = Random();
+      currentIndex = random.nextInt(playlist.length);
     } else {
-      currentIndex = 0;
+      if (currentIndex < playlist.length - 1) {
+        currentIndex++;
+      } else {
+        currentIndex = 0;
+      }
     }
 
     await playCurrentSong();
@@ -54,10 +67,15 @@ class MusicService {
   Future<void> previousSong() async {
     if (playlist.isEmpty) return;
 
-    if (currentIndex > 0) {
-      currentIndex--;
+    if (shuffleEnabled) {
+      final random = Random();
+      currentIndex = random.nextInt(playlist.length);
     } else {
-      currentIndex = playlist.length - 1;
+      if (currentIndex > 0) {
+        currentIndex--;
+      } else {
+        currentIndex = playlist.length - 1;
+      }
     }
 
     await playCurrentSong();
