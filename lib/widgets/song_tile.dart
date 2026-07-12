@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
 import '../models/song_model.dart';
+import '../services/music_service.dart';
+import '../screens/player_screen.dart';
 
 class SongTile extends StatelessWidget {
   final Song song;
-  final VoidCallback onTap;
-  final VoidCallback? onLike;
-  final bool isLiked;
+  final List<Song> playlist;
+  final int index;
 
   const SongTile({
     super.key,
     required this.song,
-    required this.onTap,
-    this.onLike,
-    this.isLiked = false,
+    required this.playlist,
+    required this.index,
   });
 
   @override
@@ -47,30 +47,25 @@ class SongTile extends StatelessWidget {
           ),
         ),
 
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-
-            IconButton(
-              onPressed: onLike,
-              icon: Icon(
-                isLiked
-                    ? Icons.favorite
-                    : Icons.favorite_border,
-                color: Colors.red,
-              ),
-            ),
-
-            const Icon(
-              Icons.play_circle_fill,
-              color: Colors.amber,
-              size: 35,
-            ),
-
-          ],
+        trailing: const Icon(
+          Icons.play_circle_fill,
+          color: Colors.amber,
+          size: 35,
         ),
 
-        onTap: onTap,
+        onTap: () {
+          MusicService.instance.setPlaylist(
+            playlist,
+            index,
+          );
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => PlayerScreen(song: song),
+            ),
+          );
+        },
       ),
     );
   }

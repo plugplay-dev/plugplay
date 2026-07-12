@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/song_model.dart';
-import '../services/music_service.dart';
-import '../widgets/mini_player.dart';
-import 'player_screen.dart';
+import '../widgets/song_tile.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -48,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
             const Text(
               "Good Evening 👋",
               style: TextStyle(
@@ -106,56 +105,15 @@ class _HomeScreenState extends State<HomeScreen> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: demoSongs.length,
               itemBuilder: (context, index) {
-                final song = demoSongs[index];
-
-                return Card(
-                  color: Colors.white10,
-                  margin: const EdgeInsets.only(bottom: 15),
-                  child: ListTile(
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(
-                        "assets/${song.cover}",
-                        width: 55,
-                        height: 55,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    title: Text(
-                      song.title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    subtitle: Text(
-                      song.artist,
-                      style: const TextStyle(
-                        color: Colors.white70,
-                      ),
-                    ),
-                    trailing: const Icon(
-                      Icons.play_circle_fill,
-                      color: Colors.amber,
-                      size: 35,
-                    ),
-                    onTap: () {
-                      MusicService.instance.setPlaylist(
-                        demoSongs,
-                        index,
-                      );
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => PlayerScreen(song: song),
-                        ),
-                      );
-                    },
-                  ),
+                return SongTile(
+                  song: demoSongs[index],
+                  playlist: demoSongs,
+                  index: index,
                 );
               },
-            ),            const SizedBox(height: 30),
+            ),
+
+            const SizedBox(height: 30),
 
             const Text(
               "🎤 Top Artists",
@@ -171,6 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: const [
+
                 CircleAvatar(
                   radius: 35,
                   backgroundColor: Colors.amber,
@@ -183,6 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
+
                 CircleAvatar(
                   radius: 35,
                   backgroundColor: Colors.amber,
@@ -195,6 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
+
                 CircleAvatar(
                   radius: 35,
                   backgroundColor: Colors.amber,
@@ -207,6 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
+
                 CircleAvatar(
                   radius: 35,
                   backgroundColor: Colors.amber,
@@ -226,7 +188,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const MiniPlayer(),
     );
   }
 }
