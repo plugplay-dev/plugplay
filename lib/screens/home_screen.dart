@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/song_model.dart';
+import '../services/music_service.dart';
 import 'player_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -104,51 +105,56 @@ class _HomeScreenState extends State<HomeScreen> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: demoSongs.length,
               itemBuilder: (context, index) {
-                final song = demoSongs[index];return Card(
-  color: Colors.white10,
-  margin: const EdgeInsets.only(bottom: 15),
-  child: ListTile(
-    leading: ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: Image.asset(
-        "assets/${song.cover}",
-        width: 55,
-        height: 55,
-        fit: BoxFit.cover,
-      ),
-    ),
-    title: Text(
-      song.title,
-      style: const TextStyle(
-        color: Colors.white,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-    subtitle: Text(
-      song.artist,
-      style: const TextStyle(
-        color: Colors.white70,
-      ),
-    ),
-    trailing: const Icon(
-      Icons.play_circle_fill,
-      color: Colors.amber,
-      size: 35,
-    ),
-    onTap: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => PlayerScreen(song: song),
-        ),
-      );
-    },
-  ),
-);
-              },
-            ),
+                final song = demoSongs[index];
 
-            const SizedBox(height: 30),
+                return Card(
+                  color: Colors.white10,
+                  margin: const EdgeInsets.only(bottom: 15),
+                  child: ListTile(
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(
+                        "assets/${song.cover}",
+                        width: 55,
+                        height: 55,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    title: Text(
+                      song.title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    subtitle: Text(
+                      song.artist,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                      ),
+                    ),
+                    trailing: const Icon(
+                      Icons.play_circle_fill,
+                      color: Colors.amber,
+                      size: 35,
+                    ),
+                    onTap: () {
+                      MusicService.instance.setPlaylist(
+                        demoSongs,
+                        index,
+                      );
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PlayerScreen(song: song),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),            const SizedBox(height: 30),
 
             const Text(
               "🎤 Top Artists",
@@ -215,7 +221,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
 
-            const SizedBox(height: 40),          ],
+            const SizedBox(height: 40),
+          ],
         ),
       ),
     );

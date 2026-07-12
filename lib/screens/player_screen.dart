@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 
@@ -17,29 +19,44 @@ class PlayerScreen extends StatefulWidget {
 }
 
 class _PlayerScreenState extends State<PlayerScreen> {
-
   final MusicService music = MusicService.instance;
+
+  late StreamSubscription<Duration> _positionSubscription;
+  late StreamSubscription<Duration> _durationSubscription;
+  late StreamSubscription<PlayerState> _stateSubscription;
 
   Duration position = Duration.zero;
   Duration duration = Duration.zero;
 
   bool isPlaying = false;
 
+  Song get song => music.currentSong ?? widget.song;
+
   @override
   void initState() {
     super.initState();
 
-    music.play(widget.song.audio);
+    music.playCurrentSong();
 
-    music.positionStream.listen((p) {
-      setState(() => position = p);
+    _positionSubscription = music.positionStream.listen((p) {
+      if (!mounted) return;
+
+      setState(() {
+        position = p;
+      });
     });
 
-    music.durationStream.listen((d) {
-      setState(() => duration = d);
+    _durationSubscription = music.durationStream.listen((d) {
+      if (!mounted) return;
+
+      setState(() {
+        duration = d;
+      });
     });
 
-    music.stateStream.listen((state) {
+    _stateSubscription = music.stateStream.listen((state) {
+      if (!mounted) return;
+
       setState(() {
         isPlaying = state == PlayerState.playing;
       });
@@ -49,23 +66,21 @@ class _PlayerScreenState extends State<PlayerScreen> {
   String format(Duration d) {
     String two(int n) => n.toString().padLeft(2, '0');
 
-    final minutes = two(d.inMinutes.remainder(60));
-    final seconds = two(d.inSeconds.remainder(60));
-
-    return "$minutes:$seconds";
-  }
-
-  @override
+    return "${two(d.inMinutes.remainder(60))}:${two(d.inSeconds.remainder(60))}";
+  }  @override
   void dispose() {
+    _positionSubscription.cancel();
+    _durationSubscription.cancel();
+    _stateSubscription.cancel();
+
     music.stop();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       backgroundColor: Colors.black,
 
       appBar: AppBar(
@@ -75,17 +90,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
       body: Padding(
         padding: const EdgeInsets.all(25),
-
         child: Column(
-
           children: [
-
             const SizedBox(height: 20),
 
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: Image.asset(
-                "assets/${widget.song.cover}",
+                "assets/${song.cover}",
                 width: 300,
                 height: 300,
                 fit: BoxFit.cover,
@@ -95,7 +107,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
             const SizedBox(height: 30),
 
             Text(
-              widget.song.title,
+              song.title,
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 28,
@@ -106,7 +118,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
             const SizedBox(height: 10),
 
             Text(
-              widget.song.artist,
+              song.artist,
               style: const TextStyle(
                 color: Colors.white70,
                 fontSize: 18,
@@ -119,7 +131,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
               activeColor: Colors.amber,
               inactiveColor: Colors.white24,
               min: 0,
-              max: duration.inSeconds.toDouble() == 0
+              max: duration.inSeconds == 0
                   ? 1
                   : duration.inSeconds.toDouble(),
               value: position.inSeconds
@@ -133,17 +145,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-
                 Text(
                   format(position),
                   style: const TextStyle(color: Colors.white),
                 ),
-
                 Text(
                   format(duration),
                   style: const TextStyle(color: Colors.white),
                 ),
-
               ],
             ),
 
@@ -151,11 +160,14 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-
               children: [
-
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    await music.previousSong();
+                    if (mounted) {
+                      setState(() {});
+                    }
+                  },
                   icon: const Icon(
                     Icons.skip_previous,
                     color: Colors.white,
@@ -166,20 +178,15 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 CircleAvatar(
                   radius: 35,
                   backgroundColor: Colors.amber,
-
                   child: IconButton(
                     iconSize: 40,
-
-                    onPressed: () {
-
+                    onPressed: () async {
                       if (isPlaying) {
-                        music.pause();
+                        await music.pause();
                       } else {
-                        music.resume();
+                        await music.resume();
                       }
-
                     },
-
                     icon: Icon(
                       isPlaying
                           ? Icons.pause
@@ -190,19 +197,22 @@ class _PlayerScreenState extends State<PlayerScreen> {
                 ),
 
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    await music.nextSong();
+                    if (mounted) {
+                      setState(() {});
+                    }
+                  },
                   icon: const Icon(
                     Icons.skip_next,
                     color: Colors.white,
                     size: 45,
                   ),
                 ),
-
               ],
             ),
 
             const SizedBox(height: 50),
-
           ],
         ),
       ),
