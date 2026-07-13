@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/song_model.dart';
 import '../widgets/song_tile.dart';
 import 'liked_songs_screen.dart';
+import 'playlists_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,7 +29,23 @@ class _HomeScreenState extends State<HomeScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
+
         actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.library_music,
+              color: Colors.amber,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const PlaylistsScreen(),
+                ),
+              );
+            },
+          ),
+
           IconButton(
             icon: const Icon(
               Icons.favorite,
@@ -126,7 +143,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   index: index,
                 );
               },
-            ),            const SizedBox(height: 30),
+            ),
+                        const SizedBox(height: 30),
 
             const Text(
               "🎤 Top Artists",

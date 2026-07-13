@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
 
 import '../models/song_model.dart';
+import '../models/playlist_model.dart';
 
 class MusicService {
   static final MusicService instance = MusicService._internal();
@@ -24,8 +25,10 @@ class MusicService {
   List<Song> playlist = [];
   int currentIndex = 0;
 
-  // ❤️ NEW
   final List<Song> likedSongs = [];
+
+  // 📂 NEW
+  final List<Playlist> playlists = [];
 
   bool shuffleEnabled = false;
   bool repeatEnabled = false;
@@ -50,18 +53,35 @@ class MusicService {
     repeatEnabled = !repeatEnabled;
   }
 
-  // ❤️ NEW
   bool isLiked(Song song) {
     return likedSongs.contains(song);
   }
 
-  // ❤️ NEW
   void toggleLike(Song song) {
     if (likedSongs.contains(song)) {
       likedSongs.remove(song);
     } else {
       likedSongs.add(song);
     }
+  }
+
+  // 📂 NEW
+  void createPlaylist(String name) {
+    playlists.add(
+      Playlist(name: name),
+    );
+  }
+
+  // 📂 NEW
+  void addSongToPlaylist(Playlist playlist, Song song) {
+    if (!playlist.songs.contains(song)) {
+      playlist.songs.add(song);
+    }
+  }
+
+  // 📂 NEW
+  void removeSongFromPlaylist(Playlist playlist, Song song) {
+    playlist.songs.remove(song);
   }
 
   Future<void> play(String path) async {
