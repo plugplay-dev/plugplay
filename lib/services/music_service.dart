@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -22,12 +23,20 @@ class MusicService {
 
   final AudioPlayer player = AudioPlayer();
 
+  // NEW
+  final StreamController<void> _songChangedController =
+      StreamController<void>.broadcast();
+
+  Stream<void> get songChangedStream => _songChangedController.stream;
+
+  void _notifySongChanged() {
+    _songChangedController.add(null);
+  }
+
   List<Song> playlist = [];
   int currentIndex = 0;
 
   final List<Song> likedSongs = [];
-
-  // 📂 NEW
   final List<Playlist> playlists = [];
 
   bool shuffleEnabled = false;
@@ -43,6 +52,7 @@ class MusicService {
   void setPlaylist(List<Song> songs, int startIndex) {
     playlist = songs;
     currentIndex = startIndex;
+    _notifySongChanged();
   }
 
   void toggleShuffle() {
@@ -65,21 +75,18 @@ class MusicService {
     }
   }
 
-  // 📂 NEW
   void createPlaylist(String name) {
     playlists.add(
       Playlist(name: name),
     );
   }
 
-  // 📂 NEW
   void addSongToPlaylist(Playlist playlist, Song song) {
     if (!playlist.songs.contains(song)) {
       playlist.songs.add(song);
     }
   }
 
-  // 📂 NEW
   void removeSongFromPlaylist(Playlist playlist, Song song) {
     playlist.songs.remove(song);
   }
@@ -87,6 +94,7 @@ class MusicService {
   Future<void> play(String path) async {
     await player.stop();
     await player.play(AssetSource(path));
+    _notifySongChanged();
   }
 
   Future<void> playCurrentSong() async {

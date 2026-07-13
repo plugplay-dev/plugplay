@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/song_model.dart';
 import '../widgets/song_tile.dart';
+import '../widgets/mini_player.dart';
 import 'liked_songs_screen.dart';
 import 'playlists_screen.dart';
 
@@ -29,7 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-
         actions: [
           IconButton(
             icon: const Icon(
@@ -45,7 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
-
           IconButton(
             icon: const Icon(
               Icons.favorite,
@@ -60,7 +59,6 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
-
           const Padding(
             padding: EdgeInsets.only(right: 20),
             child: CircleAvatar(
@@ -215,6 +213,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+
+      bottomNavigationBar: const MiniPlayer(),
     );
   }
 }
