@@ -14,6 +14,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String searchText = "";
+
+  List<Song> get filteredSongs {
+    if (searchText.isEmpty) {
+      return demoSongs;
+    }
+
+    return demoSongs.where((song) {
+      final query = searchText.toLowerCase();
+
+      return song.title.toLowerCase().contains(query) ||
+          song.artist.toLowerCase().contains(query);
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,6 +114,11 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 25),
 
             TextField(
+              onChanged: (value) {
+                setState(() {
+                  searchText = value;
+                });
+              },
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white10,
@@ -133,11 +153,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: demoSongs.length,
+              itemCount: filteredSongs.length,
               itemBuilder: (context, index) {
                 return SongTile(
-                  song: demoSongs[index],
-                  playlist: demoSongs,
+                  song: filteredSongs[index],
+                  playlist: filteredSongs,
                   index: index,
                 );
               },
