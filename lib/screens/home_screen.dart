@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/song_model.dart';
 import '../widgets/song_tile.dart';
+import 'liked_songs_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,8 +28,23 @@ class _HomeScreenState extends State<HomeScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: const [
-          Padding(
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.favorite,
+              color: Colors.red,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => LikedSongsScreen(),
+                ),
+              );
+            },
+          ),
+
+          const Padding(
             padding: EdgeInsets.only(right: 20),
             child: CircleAvatar(
               backgroundColor: Colors.amber,
@@ -46,7 +62,6 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             const Text(
               "Good Evening 👋",
               style: TextStyle(
@@ -111,9 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   index: index,
                 );
               },
-            ),
-
-            const SizedBox(height: 30),
+            ),            const SizedBox(height: 30),
 
             const Text(
               "🎤 Top Artists",
@@ -129,7 +142,6 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: const [
-
                 CircleAvatar(
                   radius: 35,
                   backgroundColor: Colors.amber,
@@ -142,7 +154,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-
                 CircleAvatar(
                   radius: 35,
                   backgroundColor: Colors.amber,
@@ -155,7 +166,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-
                 CircleAvatar(
                   radius: 35,
                   backgroundColor: Colors.amber,
@@ -168,7 +178,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-
                 CircleAvatar(
                   radius: 35,
                   backgroundColor: Colors.amber,

@@ -24,6 +24,9 @@ class MusicService {
   List<Song> playlist = [];
   int currentIndex = 0;
 
+  // ❤️ NEW
+  final List<Song> likedSongs = [];
+
   bool shuffleEnabled = false;
   bool repeatEnabled = false;
 
@@ -32,7 +35,6 @@ class MusicService {
     return playlist[currentIndex];
   }
 
-  // NEW
   bool get hasSong => currentSong != null;
 
   void setPlaylist(List<Song> songs, int startIndex) {
@@ -46,6 +48,20 @@ class MusicService {
 
   void toggleRepeat() {
     repeatEnabled = !repeatEnabled;
+  }
+
+  // ❤️ NEW
+  bool isLiked(Song song) {
+    return likedSongs.contains(song);
+  }
+
+  // ❤️ NEW
+  void toggleLike(Song song) {
+    if (likedSongs.contains(song)) {
+      likedSongs.remove(song);
+    } else {
+      likedSongs.add(song);
+    }
   }
 
   Future<void> play(String path) async {
