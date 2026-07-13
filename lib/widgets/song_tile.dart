@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../models/song_model.dart';
-import '../services/music_service.dart';
 import '../screens/player_screen.dart';
+import '../services/music_service.dart';
 
 class SongTile extends StatefulWidget {
   final Song song;
@@ -25,61 +25,18 @@ class _SongTileState extends State<SongTile> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white10,
-      margin: const EdgeInsets.only(bottom: 15),
-      child: ListTile(
-        leading: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Image.asset(
-            "assets/${widget.song.cover}",
-            width: 55,
-            height: 55,
-            fit: BoxFit.cover,
-          ),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: const Color(0xff171717),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: Colors.white10,
+          width: 1,
         ),
-
-        title: Text(
-          widget.song.title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-
-        subtitle: Text(
-          widget.song.artist,
-          style: const TextStyle(
-            color: Colors.white70,
-          ),
-        ),
-
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  music.toggleLike(widget.song);
-                });
-              },
-              icon: Icon(
-                music.isLiked(widget.song)
-                    ? Icons.favorite
-                    : Icons.favorite_border,
-                color: Colors.red,
-              ),
-            ),
-
-            const Icon(
-              Icons.play_circle_fill,
-              color: Colors.amber,
-              size: 35,
-            ),
-          ],
-        ),
-
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
         onTap: () {
           music.setPlaylist(
             widget.playlist,
@@ -93,6 +50,83 @@ class _SongTileState extends State<SongTile> {
             ),
           );
         },
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            children: [
+              Hero(
+                tag: widget.song.audio,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: Image.asset(
+                    "assets/${widget.song.cover}",
+                    width: 64,
+                    height: 64,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+
+              const SizedBox(width: 14),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.song.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(height: 4),
+
+                    Text(
+                      widget.song.artist,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    music.toggleLike(widget.song);
+                  });
+                },
+                icon: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 250),
+                  child: Icon(
+                    music.isLiked(widget.song)
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    key: ValueKey(
+                      music.isLiked(widget.song),
+                    ),
+                    color: Colors.redAccent,
+                  ),
+                ),
+              ),
+
+              const Icon(
+                Icons.play_circle_fill_rounded,
+                color: Colors.amber,
+                size: 38,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
