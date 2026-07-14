@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "433609549622",
+    "project_id": "plugplay-98d28",
+    "storage_bucket": "plugplay-98d28.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:433609549622:android:a770f0d2be51d9d2fd3597",
+        "android_client_info": {
+          "package_name": "com.example.musicflow"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdohTN6gNq09PMy98lE4PMzLf3wlPjpGc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

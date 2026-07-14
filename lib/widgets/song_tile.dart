@@ -54,16 +54,13 @@ class _SongTileState extends State<SongTile> {
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              Hero(
-                tag: widget.song.audio,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(14),
-                  child: Image.asset(
-                    "assets/${widget.song.cover}",
-                    width: 64,
-                    height: 64,
-                    fit: BoxFit.cover,
-                  ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Image.asset(
+                  "assets/${widget.song.cover}",
+                  width: 64,
+                  height: 64,
+                  fit: BoxFit.cover,
                 ),
               ),
 
