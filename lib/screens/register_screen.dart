@@ -3,54 +3,67 @@ import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
 import 'home_screen.dart';
-import 'register_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
   bool loading = false;
   bool obscurePassword = true;
+  bool obscureConfirmPassword = true;
 
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
+    confirmPasswordController.dispose();
     super.dispose();
   }
 
-  Future<void> login() async {
+  Future<void> register() async {
+    if (passwordController.text.trim() !=
+        confirmPasswordController.text.trim()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Passwords do not match"),
+        ),
+      );
+      return;
+    }
+
     setState(() {
       loading = true;
     });
 
     try {
-      await AuthService.instance.signIn(
+      await AuthService.instance.register(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
 
       if (!mounted) return;
 
-      Navigator.pushReplacement(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
           builder: (_) => const HomeScreen(),
         ),
+        (route) => false,
       );
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(e.message ?? "Login failed"),
+          content: Text(e.message ?? "Registration failed"),
         ),
       );
     } finally {
@@ -66,65 +79,34 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xff090909),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text("Create Account"),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 30),
           child: Column(
             children: [
-              const SizedBox(height: 50),
+              const SizedBox(height: 30),
 
               Image.asset(
                 'assets/images/wtp_logo.png',
-                width: 150,
+                width: 130,
               ),
 
-              const SizedBox(height: 20),
-
-              const Text(
-                "PlugPlay",
-                style: TextStyle(
-                  color: Colors.amber,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              const Text(
-                "Welcome Back",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              const Text(
-                "Sign in to continue listening",
-                style: TextStyle(
-                  color: Colors.white54,
-                  fontSize: 16,
-                ),
-              ),
-
-              const SizedBox(height: 40),
+              const SizedBox(height: 30),
 
               TextField(
                 controller: emailController,
                 keyboardType: TextInputType.emailAddress,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
+                  hintText: "Email",
                   prefixIcon: const Icon(
                     Icons.email,
                     color: Colors.amber,
-                  ),
-                  hintText: "Email",
-                  hintStyle: const TextStyle(
-                    color: Colors.white54,
                   ),
                   filled: true,
                   fillColor: Colors.white10,
@@ -142,6 +124,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: obscurePassword,
                 style: const TextStyle(color: Colors.white),
                 decoration: InputDecoration(
+                  hintText: "Password",
                   prefixIcon: const Icon(
                     Icons.lock,
                     color: Colors.amber,
@@ -151,17 +134,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       obscurePassword
                           ? Icons.visibility
                           : Icons.visibility_off,
-                      color: Colors.white54,
                     ),
                     onPressed: () {
                       setState(() {
                         obscurePassword = !obscurePassword;
                       });
                     },
-                  ),
-                  hintText: "Password",
-                  hintStyle: const TextStyle(
-                    color: Colors.white54,
                   ),
                   filled: true,
                   fillColor: Colors.white10,
@@ -172,66 +150,66 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
+
+              TextField(
+                controller: confirmPasswordController,
+                obscureText: obscureConfirmPassword,
+                style: const TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: "Confirm Password",
+                  prefixIcon: const Icon(
+                    Icons.lock_outline,
+                    color: Colors.amber,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      obscureConfirmPassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        obscureConfirmPassword =
+                            !obscureConfirmPassword;
+                      });
+                    },
+                  ),
+                  filled: true,
+                  fillColor: Colors.white10,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(18),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 35),
 
               SizedBox(
                 width: double.infinity,
-                height: 60,
+                height: 58,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.amber,
                     foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
-                    ),
                   ),
-                  onPressed: loading ? null : login,
+                  onPressed: loading ? null : register,
                   child: loading
                       ? const CircularProgressIndicator(
                           color: Colors.black,
                         )
                       : const Text(
-                          "LOGIN",
+                          "CREATE ACCOUNT",
                           style: TextStyle(
-                            fontSize: 18,
                             fontWeight: FontWeight.bold,
+                            fontSize: 17,
                           ),
                         ),
                 ),
               ),
 
               const SizedBox(height: 20),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Don't have an account?",
-                    style: TextStyle(
-                      color: Colors.white70,
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const RegisterScreen(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      "Create Account",
-                      style: TextStyle(
-                        color: Colors.amber,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 30),
             ],
           ),
         ),

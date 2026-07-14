@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../models/song_model.dart';
+import '../services/auth_service.dart';
 import '../widgets/song_tile.dart';
 import '../widgets/mini_player.dart';
 import 'liked_songs_screen.dart';
+import 'login_screen.dart';
 import 'playlists_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,11 +29,24 @@ class _HomeScreenState extends State<HomeScreen> {
     }).toList();
   }
 
+  Future<void> logout() async {
+    await AuthService.instance.signOut();
+
+    if (!mounted) return;
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const LoginScreen(),
+      ),
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xff090909),
-
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -72,6 +87,13 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
           ),
+          IconButton(
+            icon: const Icon(
+              Icons.logout,
+              color: Colors.white,
+            ),
+            onPressed: logout,
+          ),
           const Padding(
             padding: EdgeInsets.only(right: 20),
             child: CircleAvatar(
@@ -85,7 +107,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
@@ -99,9 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontSize: 18,
                 ),
               ),
-
               const SizedBox(height: 6),
-
               const Text(
                 "Find Your Perfect Sound",
                 style: TextStyle(
@@ -110,9 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
               const SizedBox(height: 24),
-
               TextField(
                 onChanged: (value) {
                   setState(() {
@@ -138,9 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 32),
-
               const Text(
                 "My Songs",
                 style: TextStyle(
@@ -149,9 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
               const SizedBox(height: 18),
-
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -164,8 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
-                            const SizedBox(height: 32),
-
+              const SizedBox(height: 32),
               const Text(
                 "Top Artists",
                 style: TextStyle(
@@ -174,9 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
               const SizedBox(height: 18),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: const [
@@ -186,13 +196,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   _ArtistAvatar(label: "D"),
                 ],
               ),
-
               const SizedBox(height: 40),
             ],
           ),
         ),
       ),
-
       bottomNavigationBar: const MiniPlayer(),
     );
   }
