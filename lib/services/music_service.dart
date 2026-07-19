@@ -2,9 +2,10 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:uuid/uuid.dart';
 
-import '../models/song_model.dart';
 import '../models/playlist_model.dart';
+import '../models/song_model.dart';
 import 'firestore_service.dart';
 
 class MusicService {
@@ -32,6 +33,8 @@ class MusicService {
   void _notifySongChanged() {
     _songChangedController.add(null);
   }
+
+  final Uuid _uuid = const Uuid();
 
   List<Song> playlist = [];
   int currentIndex = 0;
@@ -75,6 +78,14 @@ class MusicService {
     _notifySongChanged();
   }
 
+  Future<void> loadPlaylists() async {
+    playlists
+      ..clear()
+      ..addAll(await FirestoreService.instance.loadPlaylists());
+
+    _notifySongChanged();
+  }
+
   Future<void> toggleLike(Song song) async {
     if (isLiked(song)) {
       likedSongs.removeWhere((s) => s.audio == song.audio);
@@ -87,20 +98,38 @@ class MusicService {
     _notifySongChanged();
   }
 
-  void createPlaylist(String name) {
+  Future<void> createPlaylist(String name) async {
     playlists.add(
-      Playlist(name: name),
+      Playlist(
+        id: _uuid.v4(),
+        name: name,
+      ),
     );
+
+    await FirestoreService.instance.savePlaylists(playlists);
+
+    _notifySongChanged();
   }
 
-  void addSongToPlaylist(Playlist playlist, Song song) {
+  Future<void> addSongToPlaylist(Playlist playlist, Song song) async {
     if (!playlist.songs.contains(song)) {
       playlist.songs.add(song);
+
+      await FirestoreService.instance.savePlaylists(playlists);
+
+      _notifySongChanged();
     }
   }
 
-  void removeSongFromPlaylist(Playlist playlist, Song song) {
+  Future<void> removeSongFromPlaylist(
+    Playlist playlist,
+    Song song,
+  ) async {
     playlist.songs.remove(song);
+
+    await FirestoreService.instance.savePlaylists(playlists);
+
+    _notifySongChanged();
   }
 
   Future<void> play(String path) async {

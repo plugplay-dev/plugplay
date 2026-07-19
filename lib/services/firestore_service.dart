@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../models/playlist_model.dart';
 import '../models/song_model.dart';
 
 class FirestoreService {
@@ -31,19 +32,26 @@ class FirestoreService {
     );
   }
 
+  // --------------------------
+  // LIKED SONGS
+  // --------------------------
+
   Future<void> saveLikedSongs(List<Song> songs) async {
-    await userDoc.update({
-      'likedSongs': songs
-          .map(
-            (song) => {
-              'title': song.title,
-              'artist': song.artist,
-              'audio': song.audio,
-              'cover': song.cover,
-            },
-          )
-          .toList(),
-    });
+    await userDoc.set(
+      {
+        'likedSongs': songs
+            .map(
+              (song) => {
+                'title': song.title,
+                'artist': song.artist,
+                'audio': song.audio,
+                'cover': song.cover,
+              },
+            )
+            .toList(),
+      },
+      SetOptions(merge: true),
+    );
   }
 
   Future<List<Song>> loadLikedSongs() async {
@@ -71,5 +79,72 @@ class FirestoreService {
           ),
         )
         .toList();
+  }
+
+  // --------------------------
+  // PLAYLISTS
+  // --------------------------
+
+  Future<void> savePlaylists(List<Playlist> playlists) async {
+    await userDoc.set(
+      {
+        'playlists': playlists
+            .map(
+              (playlist) => {
+                'id': playlist.id,
+                'name': playlist.name,
+                'songs': playlist.songs
+                    .map(
+                      (song) => {
+                        'title': song.title,
+                        'artist': song.artist,
+                        'audio': song.audio,
+                        'cover': song.cover,
+                      },
+                    )
+                    .toList(),
+              },
+            )
+            .toList(),
+      },
+      SetOptions(merge: true),
+    );
+  }
+
+  Future<List<Playlist>> loadPlaylists() async {
+    final snapshot = await userDoc.get();
+
+    if (!snapshot.exists) {
+      return [];
+    }
+
+    final data = snapshot.data();
+
+    if (data == null || data['playlists'] == null) {
+      return [];
+    }
+
+    final playlistsData =
+        List<Map<String, dynamic>>.from(data['playlists']);
+
+    return playlistsData.map((playlist) {
+      final songs =
+          List<Map<String, dynamic>>.from(playlist['songs'] ?? []);
+
+      return Playlist(
+        id: playlist['id'] ?? '',
+        name: playlist['name'] ?? '',
+        songs: songs
+            .map(
+              (song) => Song(
+                title: song['title'] ?? '',
+                artist: song['artist'] ?? '',
+                audio: song['audio'] ?? '',
+                cover: song['cover'] ?? '',
+              ),
+            )
+            .toList(),
+      );
+    }).toList();
   }
 }

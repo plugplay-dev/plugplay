@@ -15,15 +15,19 @@ class _PlaylistsScreenState extends State<PlaylistsScreen> {
   final TextEditingController controller = TextEditingController();
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xff090909),
-
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: const Text("📂 Playlists"),
       ),
-
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.amber,
         child: const Icon(
@@ -36,14 +40,12 @@ class _PlaylistsScreenState extends State<PlaylistsScreen> {
             builder: (_) {
               return AlertDialog(
                 title: const Text("Create Playlist"),
-
                 content: TextField(
                   controller: controller,
                   decoration: const InputDecoration(
                     hintText: "Playlist name",
                   ),
                 ),
-
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -51,19 +53,30 @@ class _PlaylistsScreenState extends State<PlaylistsScreen> {
                     },
                     child: const Text("Cancel"),
                   ),
-
                   ElevatedButton(
-                    onPressed: () {
-                      if (controller.text.trim().isNotEmpty) {
-                        setState(() {
-                          music.createPlaylist(
-                            controller.text.trim(),
-                          );
-                        });
+                    onPressed: () async {
+                      final name = controller.text.trim();
+
+                      if (name.isEmpty) return;
+
+                      try {
+                        await music.createPlaylist(name);
+
+                        if (!mounted) return;
 
                         controller.clear();
 
                         Navigator.pop(context);
+
+                        setState(() {});
+                      } catch (e) {
+                        if (!mounted) return;
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(e.toString()),
+                          ),
+                        );
                       }
                     },
                     child: const Text("Create"),
@@ -74,7 +87,6 @@ class _PlaylistsScreenState extends State<PlaylistsScreen> {
           );
         },
       ),
-
       body: music.playlists.isEmpty
           ? const Center(
               child: Text(

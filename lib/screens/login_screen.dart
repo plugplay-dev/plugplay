@@ -38,8 +38,9 @@ class _LoginScreenState extends State<LoginScreen> {
         password: passwordController.text.trim(),
       );
 
-      // Load cloud liked songs after successful login
+      // Load cloud data after successful login
       await MusicService.instance.loadLikedSongs();
+      await MusicService.instance.loadPlaylists();
 
       if (!mounted) return;
 
@@ -54,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(e.message ?? "Login failed"),
+          content: Text(e.message ?? 'Login failed'),
         ),
       );
     } catch (e) {
