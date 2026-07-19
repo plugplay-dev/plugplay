@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/song_model.dart';
 import '../services/auth_service.dart';
+import '../services/music_service.dart';
 import '../widgets/song_tile.dart';
 import '../widgets/mini_player.dart';
 import 'liked_songs_screen.dart';
@@ -16,7 +17,20 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final MusicService music = MusicService.instance;
+
   String searchText = "";
+
+  @override
+  void initState() {
+    super.initState();
+
+    music.songChangedStream.listen((_) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
 
   List<Song> get filteredSongs {
     if (searchText.isEmpty) return demoSongs;
@@ -155,7 +169,34 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
+
+              if (music.recentlyPlayed.isNotEmpty) ...[
+                const SizedBox(height: 32),
+                const Text(
+                  "Recently Played",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 18),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: music.recentlyPlayed.length,
+                  itemBuilder: (context, index) {
+                    return SongTile(
+                      song: music.recentlyPlayed[index],
+                      playlist: music.recentlyPlayed,
+                      index: index,
+                    );
+                  },
+                ),
+              ],
+
               const SizedBox(height: 32),
+
               const Text(
                 "My Songs",
                 style: TextStyle(

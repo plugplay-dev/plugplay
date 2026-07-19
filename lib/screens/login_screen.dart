@@ -41,6 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
       // Load cloud data after successful login
       await MusicService.instance.loadLikedSongs();
       await MusicService.instance.loadPlaylists();
+      await MusicService.instance.loadRecentlyPlayed();
 
       if (!mounted) return;
 

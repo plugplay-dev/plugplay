@@ -57,15 +57,11 @@ class FirestoreService {
   Future<List<Song>> loadLikedSongs() async {
     final snapshot = await userDoc.get();
 
-    if (!snapshot.exists) {
-      return [];
-    }
+    if (!snapshot.exists) return [];
 
     final data = snapshot.data();
 
-    if (data == null || data['likedSongs'] == null) {
-      return [];
-    }
+    if (data == null || data['likedSongs'] == null) return [];
 
     final likedSongs = List<Map<String, dynamic>>.from(data['likedSongs']);
 
@@ -114,15 +110,11 @@ class FirestoreService {
   Future<List<Playlist>> loadPlaylists() async {
     final snapshot = await userDoc.get();
 
-    if (!snapshot.exists) {
-      return [];
-    }
+    if (!snapshot.exists) return [];
 
     final data = snapshot.data();
 
-    if (data == null || data['playlists'] == null) {
-      return [];
-    }
+    if (data == null || data['playlists'] == null) return [];
 
     final playlistsData =
         List<Map<String, dynamic>>.from(data['playlists']);
@@ -146,5 +138,53 @@ class FirestoreService {
             .toList(),
       );
     }).toList();
+  }
+
+  // --------------------------
+  // RECENTLY PLAYED
+  // --------------------------
+
+  Future<void> saveRecentlyPlayed(List<Song> songs) async {
+    await userDoc.set(
+      {
+        'recentlyPlayed': songs
+            .map(
+              (song) => {
+                'title': song.title,
+                'artist': song.artist,
+                'audio': song.audio,
+                'cover': song.cover,
+              },
+            )
+            .toList(),
+      },
+      SetOptions(merge: true),
+    );
+  }
+
+  Future<List<Song>> loadRecentlyPlayed() async {
+    final snapshot = await userDoc.get();
+
+    if (!snapshot.exists) return [];
+
+    final data = snapshot.data();
+
+    if (data == null || data['recentlyPlayed'] == null) {
+      return [];
+    }
+
+    final recentSongs =
+        List<Map<String, dynamic>>.from(data['recentlyPlayed']);
+
+    return recentSongs
+        .map(
+          (song) => Song(
+            title: song['title'] ?? '',
+            artist: song['artist'] ?? '',
+            audio: song['audio'] ?? '',
+            cover: song['cover'] ?? '',
+          ),
+        )
+        .toList();
   }
 }

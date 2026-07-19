@@ -41,6 +41,7 @@ class MusicService {
 
   final List<Song> likedSongs = [];
   final List<Playlist> playlists = [];
+  final List<Song> recentlyPlayed = [];
 
   bool shuffleEnabled = false;
   bool repeatEnabled = false;
@@ -86,6 +87,14 @@ class MusicService {
     _notifySongChanged();
   }
 
+  Future<void> loadRecentlyPlayed() async {
+    recentlyPlayed
+      ..clear()
+      ..addAll(await FirestoreService.instance.loadRecentlyPlayed());
+
+    _notifySongChanged();
+  }
+
   Future<void> toggleLike(Song song) async {
     if (isLiked(song)) {
       likedSongs.removeWhere((s) => s.audio == song.audio);
@@ -111,7 +120,10 @@ class MusicService {
     _notifySongChanged();
   }
 
-  Future<void> addSongToPlaylist(Playlist playlist, Song song) async {
+  Future<void> addSongToPlaylist(
+    Playlist playlist,
+    Song song,
+  ) async {
     if (!playlist.songs.contains(song)) {
       playlist.songs.add(song);
 
@@ -132,6 +144,18 @@ class MusicService {
     _notifySongChanged();
   }
 
+  Future<void> _addToRecentlyPlayed(Song song) async {
+    recentlyPlayed.removeWhere((s) => s.audio == song.audio);
+
+    recentlyPlayed.insert(0, song);
+
+    if (recentlyPlayed.length > 20) {
+      recentlyPlayed.removeLast();
+    }
+
+    await FirestoreService.instance.saveRecentlyPlayed(recentlyPlayed);
+  }
+
   Future<void> play(String path) async {
     await player.stop();
     await player.play(AssetSource(path));
@@ -140,6 +164,8 @@ class MusicService {
 
   Future<void> playCurrentSong() async {
     if (currentSong == null) return;
+
+    await _addToRecentlyPlayed(currentSong!);
 
     await play(currentSong!.audio);
   }
