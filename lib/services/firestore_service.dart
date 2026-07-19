@@ -16,9 +16,16 @@ class FirestoreService {
       _firestore.collection('users').doc(_uid);
 
   Future<void> createUserDocument() async {
-    await userDoc.set({
-      'email': _user?.email,
-      'createdAt': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
+    await userDoc.set(
+      {
+        'email': _user?.email,
+        'displayName': '',
+        'createdAt': FieldValue.serverTimestamp(),
+        'likedSongs': [],
+        'playlists': [],
+        'recentlyPlayed': [],
+      },
+      SetOptions(merge: true),
+    );
   }
 }
