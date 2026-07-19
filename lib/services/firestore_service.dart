@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../models/song_model.dart';
+
 class FirestoreService {
   FirestoreService._();
 
@@ -27,5 +29,47 @@ class FirestoreService {
       },
       SetOptions(merge: true),
     );
+  }
+
+  Future<void> saveLikedSongs(List<Song> songs) async {
+    await userDoc.update({
+      'likedSongs': songs
+          .map(
+            (song) => {
+              'title': song.title,
+              'artist': song.artist,
+              'audio': song.audio,
+              'cover': song.cover,
+            },
+          )
+          .toList(),
+    });
+  }
+
+  Future<List<Song>> loadLikedSongs() async {
+    final snapshot = await userDoc.get();
+
+    if (!snapshot.exists) {
+      return [];
+    }
+
+    final data = snapshot.data();
+
+    if (data == null || data['likedSongs'] == null) {
+      return [];
+    }
+
+    final likedSongs = List<Map<String, dynamic>>.from(data['likedSongs']);
+
+    return likedSongs
+        .map(
+          (song) => Song(
+            title: song['title'] ?? '',
+            artist: song['artist'] ?? '',
+            audio: song['audio'] ?? '',
+            cover: song['cover'] ?? '',
+          ),
+        )
+        .toList();
   }
 }

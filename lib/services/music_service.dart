@@ -5,6 +5,7 @@ import 'package:audioplayers/audioplayers.dart';
 
 import '../models/song_model.dart';
 import '../models/playlist_model.dart';
+import 'firestore_service.dart';
 
 class MusicService {
   static final MusicService instance = MusicService._internal();
@@ -23,7 +24,6 @@ class MusicService {
 
   final AudioPlayer player = AudioPlayer();
 
-  // NEW
   final StreamController<void> _songChangedController =
       StreamController<void>.broadcast();
 
@@ -64,15 +64,27 @@ class MusicService {
   }
 
   bool isLiked(Song song) {
-    return likedSongs.contains(song);
+    return likedSongs.any((s) => s.audio == song.audio);
   }
 
-  void toggleLike(Song song) {
-    if (likedSongs.contains(song)) {
-      likedSongs.remove(song);
+  Future<void> loadLikedSongs() async {
+    likedSongs
+      ..clear()
+      ..addAll(await FirestoreService.instance.loadLikedSongs());
+
+    _notifySongChanged();
+  }
+
+  Future<void> toggleLike(Song song) async {
+    if (isLiked(song)) {
+      likedSongs.removeWhere((s) => s.audio == song.audio);
     } else {
       likedSongs.add(song);
     }
+
+    await FirestoreService.instance.saveLikedSongs(likedSongs);
+
+    _notifySongChanged();
   }
 
   void createPlaylist(String name) {

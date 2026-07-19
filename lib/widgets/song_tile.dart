@@ -97,10 +97,12 @@ class _SongTileState extends State<SongTile> {
               ),
 
               IconButton(
-                onPressed: () {
-                  setState(() {
-                    music.toggleLike(widget.song);
-                  });
+                onPressed: () async {
+                  await music.toggleLike(widget.song);
+
+                  if (mounted) {
+                    setState(() {});
+                  }
                 },
                 icon: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 250),

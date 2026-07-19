@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
+import '../services/music_service.dart';
 import 'home_screen.dart';
 import 'register_screen.dart';
 
@@ -37,6 +38,9 @@ class _LoginScreenState extends State<LoginScreen> {
         password: passwordController.text.trim(),
       );
 
+      // Load cloud liked songs after successful login
+      await MusicService.instance.loadLikedSongs();
+
       if (!mounted) return;
 
       Navigator.pushReplacement(
@@ -51,6 +55,14 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.message ?? "Login failed"),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
         ),
       );
     } finally {
